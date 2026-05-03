@@ -1,0 +1,16 @@
+{
+  "name": "payment-api-playground",
+  "version": "1.0.0",
+  "description": "Demo website for payment API integration options and scenarios",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "type": "commonjs",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.18.2"
+  }
+}
