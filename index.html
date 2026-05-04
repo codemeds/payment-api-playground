@@ -8,12 +8,12 @@
 
   <style>
     :root {
-      --green: #00b386;
-      --green-dark: #008f6b;
+      --purple: #815af0;
+      --purple-dark: #33197d;
       --dark: #102027;
       --soft-bg: #f5fbf8;
       --card: #ffffff;
-      --border: #dce8e2;
+      --border: #ebe4fd;
       --text: #1f2933;
       --muted: #5b6770;
       --code-bg: #111827;
@@ -44,7 +44,7 @@
 
     .logo {
       font-weight: 800;
-      color: var(--green-dark);
+      color: var(--purple-dark);
       font-size: 20px;
     }
 
@@ -62,12 +62,12 @@
     }
 
     .nav-links a:hover {
-      color: var(--green-dark);
+      color: var(--purple-dark);
     }
 
     .hero {
       padding: 70px 42px;
-      background: linear-gradient(135deg, #effcf6 0%, #ffffff 100%);
+      background: linear-gradient(135deg, #ebe4fd 0%, #ffffff 100%);
       display: grid;
       grid-template-columns: 1.1fr 0.9fr;
       gap: 36px;
@@ -90,9 +90,9 @@
 
     .pill {
       display: inline-block;
-      background: #dff7ed;
-      color: var(--green-dark);
-      border: 1px solid #b7ecd6;
+      background: #ebe4fd;
+      color: var(--purple-dark);
+      border: 1px solid #ebe4fd;
       padding: 8px 14px;
       border-radius: 999px;
       font-weight: 700;
@@ -121,6 +121,7 @@
 
     section {
       padding: 54px 42px;
+      background: white;
     }
 
     .section-header {
@@ -163,7 +164,7 @@
 
     .product-image {
       height: 170px;
-      background: linear-gradient(135deg, #00b386, #8ee7c5);
+      background: linear-gradient(135deg, #33197d, #33197d);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -209,20 +210,20 @@
     }
 
     .primary {
-      background: var(--green);
+      background: var(--purple);
       color: white;
       width: 100%;
       margin-top: 20px;
     }
 
     .primary:hover {
-      background: var(--green-dark);
+      background: var(--purple-dark);
     }
 
     .secondary {
-      background: #e7f8f1;
-      color: var(--green-dark);
-      border: 1px solid #b7ecd6;
+      background: #efd6f5;
+      color: var(--purple-dark);
+      border: 1px solid #7c66ea;
     }
 
     .tabs {
@@ -233,7 +234,7 @@
     }
 
     .tabs button {
-      background: #eef3f0;
+      background: #ebe4fd;
       color: var(--dark);
       padding: 10px 12px;
     }
@@ -251,13 +252,13 @@
     }
 
     .scenario-buttons button {
-      background: #eef3f0;
+      background: #ebe4fd;
       color: var(--dark);
       font-size: 13px;
     }
 
     .scenario-buttons button.active {
-      background: var(--green);
+      background: var(--purple);
       color: white;
     }
 
@@ -266,9 +267,9 @@
       margin-top: 16px;
       padding: 14px;
       border-radius: 12px;
-      border: 1px solid #b7ecd6;
-      background: #e7f8f1;
-      color: var(--green-dark);
+      border: 1px solid #7c66ea;
+      background: #efd6f5;
+      color: var(--purple-dark);
       font-weight: 700;
     }
 
@@ -343,6 +344,8 @@
   </style>
 </head>
 
+<script src="https://secure.helcim.app/helcim-pay.js"></script>
+
 <body>
 
   <nav>
@@ -393,9 +396,9 @@
           <div class="product-image">HC</div>
 
           <div class="product-content">
-            <h3>Premium Coffee Subscription</h3>
-            <p>Monthly subscription for locally roasted coffee.</p>
-            <div class="price">$25.00 CAD</div>
+            <h3>Buy Me A Coffee</h3>
+            <p>Support my coffee habit with a one-time donation.</p>
+            <div class="price">$5.00 CAD</div>
 
             <button class="primary" onclick="initializeHelcimPay()">Pay Now</button>
           </div>
@@ -446,9 +449,27 @@
         </select>
 
         <label for="email">Customer Email</label>
-        <input id="email" type="email" value="customer@example.com" />
+        <input id="email" type="email" value="medishahelcim@gmail.com" />
 
-        <label for="card">Sandbox Test Card</label>
+        <label>Full Name</label>
+        <input id="name" type="text" placeholder="John Doe" />
+
+        <label>Street Address</label>
+        <input id="street" type="text" placeholder="123 Main St" />
+
+        <label>City</label>
+        <input id="city" type="text" placeholder="Calgary" />
+
+        <label>Province</label>
+        <input id="province" type="text" placeholder="AB" />
+
+        <label>Postal Code</label>
+        <input id="postal" type="text" placeholder="T2P 1A1" />
+
+        <label>Country</label>
+        <input id="country" type="text" value="CAN" />
+
+        <label for="card">Credit Card Information</label>
         <input id="card" type="text" value="4124939999999990" />
 
         <button class="primary" onclick="runPaymentApiScenario()">Run Payment API Scenario</button>
@@ -564,8 +585,28 @@
         stepTwo: "Render payment modal using checkoutToken"
       }, null, 2);
 
-      document.getElementById("modalToken").textContent =
-        JSON.stringify({ checkoutToken: data.checkoutToken }, null, 2);
+      const isLocalhost =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1";
+
+if (isLocalhost) {
+  document.getElementById("modalToken").textContent = `
+HelcimPay.js cannot be rendered on localhost.
+
+Reason:
+This integration requires a secure (HTTPS) public URL.
+
+How to test:
+- Use ngrok
+- Or deploy backend (Render)
+
+Current mode:
+Demo only
+  `;
+} else {
+  document.getElementById("modalToken").textContent =
+    JSON.stringify({ checkoutToken: data.checkoutToken }, null, 2);
+}
 
       result.textContent = "Checkout session initialized. Demo modal opened.";
       document.getElementById("checkoutModal").style.display = "flex";
@@ -575,30 +616,43 @@
       document.getElementById("checkoutModal").style.display = "none";
     }
 
-    function completeMockPayment() {
-      document.getElementById("helcimPayConsole").textContent =
-        JSON.stringify({
-          paymentStatus: "APPROVED",
-          message: "Mock HelcimPay.js payment completed.",
-          nextStep: "Validate the transaction response on the backend."
-        }, null, 2);
+    async function completeMockPayment() {
+  try {
+    const response = await fetch("/api/helcimpay/initialize", {
+      method: "POST"
+    });
 
-      document.getElementById("helcimPayResult").textContent =
-        "Mock payment approved. Response would now be validated server-side.";
+    const data = await response.json();
 
-      closeModal();
-    }
+    console.log("Helcim response:", data);
+
+    // 🔥 REAL MAGIC HERE
+    appendHelcimPayIframe({
+      checkoutToken: data.checkoutToken
+    });
+
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
 
     function buildPaymentPayload() {
-      return {
-        scenario: currentScenario,
-        endpoint: scenarios[currentScenario].endpoint,
-        amount: Number(document.getElementById("amount").value),
-        currency: document.getElementById("currency").value,
-        email: document.getElementById("email").value,
-        card: document.getElementById("card").value
-      };
+  return {
+    amount: Number(document.getElementById("amount").value),
+    currency: document.getElementById("currency").value,
+    email: document.getElementById("email").value,
+    card: document.getElementById("card").value,
+
+    billingAddress: {
+      name: document.getElementById("name").value,
+      street1: document.getElementById("street").value,
+      city: document.getElementById("city").value,
+      province: document.getElementById("province").value,
+      postalCode: document.getElementById("postal").value,
+      country: document.getElementById("country").value
     }
+  };
+}
 
     function loadScenario(type) {
       currentScenario = type;
