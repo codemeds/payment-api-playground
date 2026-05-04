@@ -15,7 +15,7 @@ app.get("/", (req, res) => {
 
 app.post("/api/payment", async (req, res) => {
   try {
-    const { amount, currency, card, billingAddress } = req.body;
+    const { amount, currency, card, cardExpiry, cardCVV, billingAddress } = req.body;
 
     const idempotencyKey = crypto.randomUUID();
 
@@ -34,8 +34,8 @@ app.post("/api/payment", async (req, res) => {
   },
   cardData: {
     cardNumber: card,
-    cardExpiry: "0128",
-    cardCVV: "100"
+    cardExpiry: cardExpiry,
+    cardCVV: cardCVV
   }
     };
 
@@ -83,7 +83,9 @@ app.post("/api/helcimpay/initialize", async (req, res) => {
       body: JSON.stringify({
         paymentType: "purchase",
         amount: Number(amount) || 25,
-        currency: currency || "CAD"
+        currency: currency || "CAD",
+        paymentMethod: "cc-ach",
+        terminalId: process.env.HELCIM_TERMINALID
       })
     });
 

@@ -31,35 +31,49 @@
     }
 
     nav {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      background: white;
-      border-bottom: 1px solid var(--border);
-      padding: 16px 42px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: white;
+  border-bottom: 1px solid var(--border);
+  padding: 14px 42px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 72px;
+}
 
-    .logo {
-      font-weight: 800;
-      color: var(--purple-dark);
-      font-size: 20px;
-    }
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
 
-    .nav-links {
-      display: flex;
-      gap: 18px;
-      align-items: center;
-    }
+.logo img {
+  height: 42px;
+  width: auto;
+  display: block;
+}
 
-    .nav-links a {
-      color: var(--dark);
-      text-decoration: none;
-      font-weight: 700;
-      font-size: 14px;
-    }
+.logo span {
+  font-weight: 800;
+  font-size: 20px;
+  color: var(--dark);
+  line-height: 1;
+}
+
+.nav-links {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.nav-links a {
+  color: var(--dark);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 14px;
+}
 
     .nav-links a:hover {
       color: var(--purple-dark);
@@ -92,7 +106,7 @@
       display: inline-block;
       background: #ebe4fd;
       color: var(--purple-dark);
-      border: 1px solid #ebe4fd;
+      border: 1px solid #33197d;
       padding: 8px 14px;
       border-radius: 999px;
       font-weight: 700;
@@ -164,7 +178,7 @@
 
     .product-image {
       height: 170px;
-      background: linear-gradient(135deg, #33197d, #33197d);
+      background: linear-gradient(135deg, #33197d, #815de4);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -304,13 +318,18 @@
     }
 
     .modal-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 18px;
+      display: fixed;
+      gap: 12px;
+      margin-top: 20px;
     }
 
     .modal-actions button {
       flex: 1;
+      min-height: 50px;
+      width: 100%;
+      border-radius: 12px;
+      font-weight: 700;
+
     }
 
     .footer {
@@ -341,6 +360,21 @@
         grid-template-columns: 1fr 1fr;
       }
     }
+
+    .collapse-btn {
+      width: 100%;
+      margin-top: 18px;
+      background: #ebe4fd;
+      color: var(--purple-dark);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .billing-details {
+      margin-top: 8px;
+    }
+
   </style>
 </head>
 
@@ -349,32 +383,38 @@
 <body>
 
   <nav>
-    <div class="logo">Helcim API Playground</div>
-
+<div class="logo">
+  <img src="helcim-logo.jpg" alt="Helcim Logo" />
+  <span>API Playground</span>
+</div>
     <div class="nav-links">
       <a href="https://devdocs.helcim.com/docs/welcome-to-helcim" target="_blank">Helcim Devdocs</a>
+      <!--
       <a href="#helcimpay">HelcimPay.js</a>
       <a href="#payment-api">Payment API</a>
+      -->
     </div>
   </nav>
 
   <header class="hero">
     <div>
-      <span class="pill">Sandbox Demo</span>
+      <span class="pill">Sandbox Payment Solutions</span>
       <h1>Compare payment integration options in one guided demo.</h1>
       <p>
         This demo shows how a merchant could understand the difference between
         HelcimPay.js and the direct Payment API using product checkout examples,
         request payloads, responses, and support-friendly explanations.
       </p>
-      <a href="#helcimpay"><button class="secondary">Start with HelcimPay.js</button></a>
+      <a href="#helcimpay"><button class="secondary">HelcimPay.js</button></a>
+      <a href="#payment-api"><button class="secondary">Helcim API</button></a>
+      <a href="#payment-api"><button class="secondary">Helcim.js</button></a>
     </div>
 
     <div class="hero-card">
       <h3>Demo Goal</h3>
       <pre>{
-  "phaseOne": "Compare integration options",
-  "phaseTwo": "Show endpoints and payloads",
+  "phaseOne": "Compare integration options in sandbox environment",
+  "phaseTwo": "Show endpoints, payloads and responses",
   "phaseThree": "Expand into recurring and device APIs"
 }</pre>
     </div>
@@ -393,7 +433,7 @@
     <div class="grid">
       <div class="card">
         <div class="product-card">
-          <div class="product-image">HC</div>
+          <div class="product-image">Donate</div>
 
           <div class="product-content">
             <h3>Buy Me A Coffee</h3>
@@ -425,7 +465,7 @@
 
     <div class="grid">
       <div class="card">
-        <h3>Payment Scenario</h3>
+        <h3>Payment API Scenarios: </h3>
 
         <div class="scenario-buttons">
           <button id="btn-purchase" class="active" onclick="loadScenario('purchase')">Purchase</button>
@@ -439,42 +479,67 @@
         <h3 id="scenarioTitle">Purchase Payment</h3>
         <p id="scenarioDescription">Processes a full payment immediately.</p>
 
-        <label for="amount">Amount</label>
-        <input id="amount" type="number" value="25.00" />
+        <div id="paymentForm">
+          <label for="amount">Amount</label>
+          <input id="amount" type="number" value="25.00" />
 
-        <label for="currency">Currency</label>
-        <select id="currency">
-          <option value="CAD">CAD</option>
-          <option value="USD">USD</option>
-        </select>
+          <label for="currency">Currency</label>
+          <select id="currency">
+            <option value="CAD">CAD</option>
+            <option value="USD">USD</option>
+          </select>
 
-        <label for="email">Customer Email</label>
-        <input id="email" type="email" value="medishahelcim@gmail.com" />
+          <label for="email">Customer Email</label>
+          <input id="email" type="email" value="medishahelcim@gmail.com" />
 
-        <label>Full Name</label>
-        <input id="name" type="text" placeholder="John Doe" />
+          <button type="button" class="collapse-btn" onclick="toggleBillingDetails()">
+            Billing Details
+           <span id="billingToggleIcon">+</span>
+          </button>
 
-        <label>Street Address</label>
-        <input id="street" type="text" placeholder="123 Main St" />
+          <div id="billingDetails" class="billing-details" style="display: none;">
 
-        <label>City</label>
-        <input id="city" type="text" placeholder="Calgary" />
+          <label>Full Name</label>
+          <input id="name" type="text" placeholder="John Doe" />
 
-        <label>Province</label>
-        <input id="province" type="text" placeholder="AB" />
+          <label>Street Address</label>
+          <input id="street" type="text" placeholder="123 Main St" />
 
-        <label>Postal Code</label>
-        <input id="postal" type="text" placeholder="T2P 1A1" />
+          <label>City</label>
+          <input id="city" type="text" placeholder="Calgary" />
 
-        <label>Country</label>
-        <input id="country" type="text" value="CAN" />
+          <label>Province</label>
+          <input id="province" type="text" placeholder="AB" />
 
-        <label for="card">Credit Card Information</label>
-        <input id="card" type="text" value="4124939999999990" />
+          <label>Postal Code</label>
+          <input id="postal" type="text" placeholder="T2P 1A1" />
 
-        <button class="primary" onclick="runPaymentApiScenario()">Run Payment API Scenario</button>
+          <label>Country</label>
+          <input id="country" type="text" value="CAN" />
 
-        <div id="paymentResult" class="result"></div>
+          </div>
+
+          <label for="card">Card Number</label>
+          <input id="card" type="text" value="4124939999999990" />
+
+          <label for="cardExpiry">Card Expiry</label>
+          <input id="cardExpiry" type="text" value="0128" placeholder="MMYY" />
+
+          <label for="cardCVV">CVV</label>
+          <input id="cardCVV" type="text" value="100" placeholder="100" />
+
+          <button class="primary" onclick="runPaymentApiScenario()">Run Purchase Scenario</button>
+
+          <div id="paymentResult" class="result"></div>
+        </div>
+
+        <div id="comingSoon" class="result" style="display: none;">
+          <strong>Endpoint Coming Soon</strong><br>
+          This scenario is planned for the next phase of the demo.
+          <br><br>
+          Planned support will include request structure, response handling, required parameters, and troubleshooting notes.
+        </div>
+        
       </div>
 
       <div class="card">
@@ -500,8 +565,9 @@
       <pre id="modalToken"></pre>
 
       <div class="modal-actions">
-        <button class="secondary" onclick="closeModal()">Close</button>
         <button class="primary" onclick="completeMockPayment()">Simulate Payment</button>
+        <button class="secondary" onclick="closeModal()">Close</button>
+        
       </div>
     </div>
   </div>
@@ -563,9 +629,9 @@
 
       const payload = {
         paymentType: "purchase",
-        amount: 25.00,
+        amount: 5.00,
         currency: "CAD",
-        product: "Premium Coffee Subscription"
+        product: "Coffee Donation"
       };
 
       const response = await fetch("/api/helcimpay/initialize", {
@@ -599,6 +665,7 @@ This integration requires a secure (HTTPS) public URL.
 How to test:
 - Use ngrok
 - Or deploy backend (Render)
+- Click on "Simulate Payment" to see a mock flow with our hosted URL
 
 Current mode:
 Demo only
@@ -616,32 +683,44 @@ Demo only
       document.getElementById("checkoutModal").style.display = "none";
     }
 
-    async function completeMockPayment() {
+   async function completeMockPayment() {
   try {
     const response = await fetch("/api/helcimpay/initialize", {
-      method: "POST"
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      }
     });
 
     const data = await response.json();
 
-    console.log("Helcim response:", data);
+    console.log("HelcimPay response:", data);
 
-    // 🔥 REAL MAGIC HERE
-    appendHelcimPayIframe({
-      checkoutToken: data.checkoutToken
-    });
+    if (!data.checkoutToken) {
+      alert("No checkout token returned");
+      return;
+    }
+
+    const checkoutUrl = `https://secure.helcim.app/helcim-pay/${data.checkoutToken}`;
+
+    // 👇 OPEN HOSTED CHECKOUT
+    window.open(checkoutUrl, "_blank");
 
   } catch (error) {
     console.error("Error:", error);
+    alert("Failed to initialize checkout");
   }
 }
 
+ 
     function buildPaymentPayload() {
   return {
     amount: Number(document.getElementById("amount").value),
     currency: document.getElementById("currency").value,
     email: document.getElementById("email").value,
     card: document.getElementById("card").value,
+    cardExpiry: document.getElementById("cardExpiry").value,
+    cardCVV: document.getElementById("cardCVV").value,
 
     billingAddress: {
       name: document.getElementById("name").value,
@@ -666,6 +745,17 @@ Demo only
 
       document.getElementById("scenarioTitle").textContent = scenarios[type].title;
       document.getElementById("scenarioDescription").textContent = scenarios[type].description;
+
+      const paymentForm = document.getElementById("paymentForm");
+      const comingSoon = document.getElementById("comingSoon");
+
+      if (type === "purchase") {
+        paymentForm.style.display = "block";
+        comingSoon.style.display = "none";
+      } else {
+        paymentForm.style.display = "none";
+        comingSoon.style.display = "block";
+      }
 
       showTab("request");
     }
@@ -749,6 +839,19 @@ Demo only
 
       showTab("response");
     }
+
+    function toggleBillingDetails() {
+  const details = document.getElementById("billingDetails");
+  const icon = document.getElementById("billingToggleIcon");
+
+  if (details.style.display === "none") {
+    details.style.display = "block";
+    icon.textContent = "−";
+  } else {
+    details.style.display = "none";
+    icon.textContent = "+";
+  }
+}
 
     loadScenario("purchase");
   </script>
