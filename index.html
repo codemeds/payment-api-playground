@@ -375,6 +375,102 @@
       margin-top: 8px;
     }
 
+    textarea {
+  width: 100%;
+  min-height: 360px;
+  margin-top: 10px;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  font-size: 14px;
+  font-family: monospace;
+  resize: vertical;
+  overflow: auto;
+}
+
+.inspector-status {
+  padding: 14px;
+  border-radius: 12px;
+  margin-bottom: 14px;
+  font-weight: 700;
+}
+
+.status-pass {
+  background: #ecfdf3;
+  color: #166534;
+  border: 1px solid #86efac;
+}
+
+.status-fail {
+  background: #fff1f2;
+  color: #991b1b;
+  border: 1px solid #fecdd3;
+}
+
+.issue-list {
+  display: grid;
+  gap: 10px;
+}
+
+.issue-card {
+  border: 1px solid var(--border);
+  background: white;
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.issue-card strong {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--purple-dark);
+}
+
+.copy-btn {
+  margin-top: 12px;
+  background: #ebe4fd;
+  color: var(--purple-dark);
+  border: 1px solid #cfc2ff;
+}
+
+#payload-inspector .grid {
+  grid-template-columns: 1fr 2fr;
+  align-items: start;
+}
+
+#payload-inspector .card {
+  min-width: 0;
+}
+
+#payload-inspector textarea {
+  width: 100%;
+  min-height: 420px;
+  white-space: pre;
+  overflow: auto;
+}
+
+#payload-inspector pre {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+#inspectorExplanation {
+  min-height: 220px;
+}
+
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 24px;
+}
+
+.results-header h3 {
+  margin: 0;
+}
+
   </style>
 </head>
 
@@ -389,6 +485,7 @@
 </div>
     <div class="nav-links">
       <a href="https://devdocs.helcim.com/docs/welcome-to-helcim" target="_blank">Helcim Devdocs</a>
+      <a href="#payload-inspector">Payload Inspector</a>
       <!--
       <a href="#helcimpay">HelcimPay.js</a>
       <a href="#payment-api">Payment API</a>
@@ -571,7 +668,55 @@
       </div>
     </div>
   </div>
+  <section id="payload-inspector">
+  <div class="section-header">
+    <h2>Payload Inspector</h2>
+    <p>
+      Paste a merchant request payload, choose the endpoint, and check for missing
+      or invalid fields before escalating or sending the request.
+    </p>
+  </div>
 
+  <div class="grid">
+    <div class="card">
+      <h3>Merchant Payload</h3>
+
+      <label for="inspectorEndpoint">Endpoint</label>
+      <select id="inspectorEndpoint" onchange="loadSamplePayload()">
+        <option value="purchase">Purchase Payment</option>
+        <option value="preauth">Pre-Authorization</option>
+        <option value="capture">Capture</option>
+        <option value="refund">Refund</option>
+        <option value="void">Void / Reverse</option>
+        <option value="verify">Verify Card</option>
+      </select>
+
+      <label for="payloadInput">Paste JSON Payload</label>
+      <textarea id="payloadInput"></textarea>
+
+      <button class="primary" onclick="inspectPayload()">Inspect Payload</button>
+      
+    </div>
+
+    <div class="card">
+      <h3>Validation Results</h3>
+      <div id="inspectorStatus" class="inspector-status status-pass">
+        Paste a payload and click Inspect Payload.
+      </div>
+
+      <div id="inspectorResults" class="issue-list"></div>
+
+      <div class="results-header">
+  <h3>Support Explanation</h3>
+  <!-- <button class="copy-btn" onclick="copyInspectorResults()">Copy Results</button> -->
+</div>
+
+<pre id="inspectorExplanation">Results will appear here.</pre>
+<button class="copy-btn" onclick="copyInspectorResults()">Copy Results</button>
+
+    </div>
+  </div>
+</section>
   <footer class="footer">
     Demo project for comparing payment integration options, endpoint workflows, and support-friendly troubleshooting guidance.
   </footer>
@@ -852,6 +997,274 @@ Demo only
     icon.textContent = "+";
   }
 }
+
+const samplePayloads = {
+  purchase: {
+    ipAddress: "192.168.1.1",
+    terminalId: 68535,
+    currency: "CAD",
+    amount: 25,
+    billingAddress: {
+      name: "Test Customer",
+      street1: "123 Test Street",
+      city: "Calgary",
+      province: "AB",
+      country: "CAN",
+      postalCode: "T2P 1A1"
+    },
+    cardData: {
+      cardNumber: "4124939999999990",
+      cardExpiry: "0128",
+      cardCVV: "100"
+    }
+  },
+
+  preauth: {
+    ipAddress: "192.168.1.1",
+    terminalId: 68535,
+    currency: "CAD",
+    amount: 25,
+    billingAddress: {
+      name: "Test Customer",
+      street1: "123 Test Street",
+      city: "Calgary",
+      province: "AB",
+      country: "CAN",
+      postalCode: "T2P 1A1"
+    },
+    cardData: {
+      cardNumber: "4124939999999990",
+      cardExpiry: "0128",
+      cardCVV: "100"
+    }
+  },
+
+  capture: {
+    transactionId: "123456789",
+    amount: 25
+  },
+
+  refund: {
+    originalTransactionId: "123456789",
+    amount: 25
+  },
+
+  void: {
+    transactionId: "123456789"
+  },
+
+  verify: {
+    ipAddress: "192.168.1.1",
+    terminalId: 68535,
+    currency: "CAD",
+    billingAddress: {
+      name: "Test Customer",
+      street1: "123 Test Street",
+      city: "Calgary",
+      province: "AB",
+      country: "CAN",
+      postalCode: "T2P 1A1"
+    },
+    cardData: {
+      cardNumber: "4124939999999990",
+      cardExpiry: "0128",
+      cardCVV: "100"
+    }
+  }
+};
+
+const endpointRules = {
+  purchase: [
+    "ipAddress",
+    "terminalId",
+    "currency",
+    "amount",
+    "billingAddress.name",
+    "billingAddress.street1",
+    "billingAddress.city",
+    "billingAddress.province",
+    "billingAddress.country",
+    "billingAddress.postalCode",
+    "cardData.cardNumber",
+    "cardData.cardExpiry",
+    "cardData.cardCVV"
+  ],
+
+  preauth: [
+    "ipAddress",
+    "terminalId",
+    "currency",
+    "amount",
+    "billingAddress.name",
+    "billingAddress.street1",
+    "billingAddress.city",
+    "billingAddress.province",
+    "billingAddress.country",
+    "billingAddress.postalCode",
+    "cardData.cardNumber",
+    "cardData.cardExpiry",
+    "cardData.cardCVV"
+  ],
+
+  capture: [
+    "transactionId",
+    "amount"
+  ],
+
+  refund: [
+    "originalTransactionId",
+    "amount"
+  ],
+
+  void: [
+    "transactionId"
+  ],
+
+  verify: [
+    "ipAddress",
+    "terminalId",
+    "currency",
+    "billingAddress.name",
+    "billingAddress.street1",
+    "billingAddress.city",
+    "billingAddress.province",
+    "billingAddress.country",
+    "billingAddress.postalCode",
+    "cardData.cardNumber",
+    "cardData.cardExpiry",
+    "cardData.cardCVV"
+  ]
+};
+
+function loadSamplePayload() {
+  const endpoint = document.getElementById("inspectorEndpoint").value;
+  document.getElementById("payloadInput").value =
+    JSON.stringify(samplePayloads[endpoint], null, 2);
+
+  document.getElementById("inspectorStatus").className =
+    "inspector-status status-pass";
+  document.getElementById("inspectorStatus").textContent =
+    "Sample payload loaded. Click Inspect Payload.";
+  document.getElementById("inspectorResults").innerHTML = "";
+  document.getElementById("inspectorExplanation").textContent =
+    "Results will appear here.";
+}
+
+function getNestedValue(object, path) {
+  return path.split(".").reduce((current, key) => {
+    return current && current[key] !== undefined ? current[key] : undefined;
+  }, object);
+}
+
+function inspectPayload() {
+  const endpoint = document.getElementById("inspectorEndpoint").value;
+  const rawPayload = document.getElementById("payloadInput").value;
+  const statusBox = document.getElementById("inspectorStatus");
+  const resultsBox = document.getElementById("inspectorResults");
+  const explanationBox = document.getElementById("inspectorExplanation");
+
+  let payload;
+
+  try {
+    payload = JSON.parse(rawPayload);
+  } catch (error) {
+    statusBox.className = "inspector-status status-fail";
+    statusBox.textContent = "Invalid JSON format.";
+
+    resultsBox.innerHTML = `
+      <div class="issue-card">
+        <strong>JSON Parse Error</strong>
+        The payload could not be read. Check for missing commas, brackets, or quotation marks.
+      </div>
+    `;
+
+    explanationBox.textContent =
+      "Support note: The merchant's payload is not valid JSON. Ask them to correct the formatting before troubleshooting the API response.";
+
+    return;
+  }
+
+  const requiredFields = endpointRules[endpoint];
+  const issues = [];
+
+  requiredFields.forEach(field => {
+    const value = getNestedValue(payload, field);
+
+    if (value === undefined || value === null || value === "") {
+      issues.push({
+        field,
+        issue: "Missing required field",
+        explanation: `${field} is required for the selected endpoint.`
+      });
+    }
+  });
+
+  if (payload.amount !== undefined && typeof payload.amount !== "number") {
+    issues.push({
+      field: "amount",
+      issue: "Invalid value type",
+      explanation: "amount should be a number, not a string."
+    });
+  }
+
+  if (payload.cardData && payload.cardData.cardExpiry) {
+    const expiry = String(payload.cardData.cardExpiry);
+
+    if (!/^\d{4}$/.test(expiry)) {
+      issues.push({
+        field: "cardData.cardExpiry",
+        issue: "Invalid format",
+        explanation: "cardExpiry should be in MMYY format, for example 0128."
+      });
+    }
+  }
+
+  if (issues.length === 0) {
+    statusBox.className = "inspector-status status-pass";
+    statusBox.textContent = "Payload passed basic validation.";
+
+    resultsBox.innerHTML = `
+      <div class="issue-card">
+        <strong>No basic payload issues found</strong>
+        This does not guarantee approval, but the required fields are present for this endpoint.
+      </div>
+    `;
+
+    explanationBox.textContent =
+      "Support note: The payload includes the required fields for this endpoint. If the request still fails, review the API response, card/test data, merchant configuration, or transaction state.";
+
+    return;
+  }
+
+  statusBox.className = "inspector-status status-fail";
+  statusBox.textContent = `${issues.length} issue(s) found.`;
+
+  resultsBox.innerHTML = issues.map(issue => `
+    <div class="issue-card">
+      <strong>${issue.field}</strong>
+      ${issue.issue}<br>
+      <small>${issue.explanation}</small>
+    </div>
+  `).join("");
+
+  explanationBox.textContent = JSON.stringify({
+    selectedEndpoint: endpoint,
+    result: "Payload issues found",
+    likelyCause: "The request is missing required fields or contains invalid values.",
+    supportAction: "Ask the merchant to update the highlighted fields before escalating.",
+    issues
+  }, null, 2);
+}
+
+function copyInspectorResults() {
+  const explanation = document.getElementById("inspectorExplanation").textContent;
+
+  navigator.clipboard.writeText(explanation)
+    .then(() => alert("Inspector results copied."))
+    .catch(() => alert("Could not copy results."));
+}
+
+loadSamplePayload();
 
     loadScenario("purchase");
   </script>
